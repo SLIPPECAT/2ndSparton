@@ -1,0 +1,18 @@
+name: RMB
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  remove_merged_branch_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: trigger_event_type
+        env: 
+          GITHUB_EVENT: ${{ toJson(github.event.pull_request)}} 
+        run: echo $GITHUB_EVENT
+      - name: PR merged
+        if: github.event.pull_request.merged == true
+        uses: ikaruce/rmb@v4
+        with:
+          github_token: ${{ github.token }}
