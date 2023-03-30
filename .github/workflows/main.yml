@@ -1,18 +1,17 @@
-name: RMB
+name: Delete Branch on Merge
+
 on:
   pull_request:
-    types: [closed]
+    types:
+      - closed
 
 jobs:
-  remove_merged_branch_job:
+  delete_branch:
     runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true && github.event.pull_request.head.ref != 'main'
     steps:
-      - name: trigger_event_type
-        env: 
-          GITHUB_EVENT: ${{ toJson(github.event.pull_request)}} 
-        run: echo $GITHUB_EVENT
-      - name: PR merged
-        if: github.event.pull_request.merged == true
-        uses: ikaruce/rmb@v4
+      - name: Delete merged branch
+        uses: dawidd6/action-delete-branch@v3
         with:
-          github_token: ${{ github.token }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.event.pull_request.head.ref }}
